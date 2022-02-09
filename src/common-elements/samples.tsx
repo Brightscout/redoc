@@ -1,6 +1,6 @@
+import { darken, getLuminance, lighten } from 'polished';
 import styled from '../styled-components';
 import { PrismDiv } from './PrismDiv';
-import { darken, getLuminance, lighten } from 'polished';
 
 export const SampleControls = styled.div`
   opacity: 0.7;
