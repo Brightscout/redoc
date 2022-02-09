@@ -6,33 +6,73 @@ import styled from '../styled-components';
 export { Tab, TabList, TabPanel } from 'react-tabs';
 
 export const Tabs = styled(ReactTabs)`
+  ${({ theme }) =>
+    theme.rightPanel.borderColor &&
+    `& {
+      border: 1px solid  ${theme.rightPanel.borderColor};
+    }
+  `}
+
+  ${({ theme }) =>
+    theme.rightPanel.showBorderRadius &&
+    `& {
+        border-radius: 5px;
+        overflow: hidden;
+      }
+    `}
+
   > ul {
     list-style: none;
     padding: 0;
-    margin: 0;
-    margin: 0 -5px;
+
+    ${({ theme }) =>
+      theme.rightPanel.borderColor &&
+      `& {
+        border-bottom: 1px solid ${theme.rightPanel.borderColor};
+        background: ${theme.codeBlock.backgroundColor};
+        margin: 0;
+      }
+    `}
 
     > li {
       padding: 5px 10px;
       display: inline-block;
+      ${({ theme }) =>
+        theme.rightPanel.borderColor &&
+        `& {
+          margin: 0;
+          background: ${({ theme }) => theme.colors.gray[100]};
+        }
+      `}
 
       background-color: ${({ theme }) => theme.codeBlock.backgroundColor};
-      border-bottom: 1px solid rgba(0, 0, 0, 0.5);
       cursor: pointer;
       text-align: center;
       outline: none;
       color: ${({ theme }) => darken(theme.colors.tonalOffset, theme.rightPanel.textColor)};
-      margin: 0
-        ${({ theme }) => `${theme.spacing.unit}px ${theme.spacing.unit}px ${theme.spacing.unit}px`};
-      border: 1px solid ${({ theme }) => darken(0.05, theme.codeBlock.backgroundColor)};
-      border-radius: 5px;
+      ${({ theme }) =>
+        !theme.rightPanel.borderColor &&
+        `& {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+            margin: 0 ${theme.spacing.unit}px ${theme.spacing.unit}px ${theme.spacing.unit}px;
+            border: 1px solid ${({ theme }) => darken(0.05, theme.codeBlock.backgroundColor)};
+            border-radius: 5px;
+          }
+      `}
       min-width: 60px;
       font-size: 0.9em;
       font-weight: bold;
 
       &.react-tabs__tab--selected {
+        ${({ theme }) =>
+          theme.rightPanel.borderColor &&
+          `& {
+            border-bottom: 4px solid #5eacd8;
+            margin-bottom: -1px;
+          }
+        `}
         color: ${props => props.theme.colors.text.primary};
-        background: ${({ theme }) => theme.rightPanel.textColor};
+        background: ${({ theme }) => theme.rightPanel.panelControlsBackgroundColor};
         &:focus {
           outline: auto;
         }

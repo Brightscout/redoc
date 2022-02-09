@@ -13,14 +13,19 @@ export const ApiHeader = styled(H1)`
 `;
 
 export const DownloadButton = styled.a`
-  border: 1px solid ${props => props.theme.colors.primary.main};
-  color: ${props => props.theme.colors.primary.main};
-  font-weight: normal;
+  color: white;
+  font-weight: 600;
   margin-left: 0.5em;
   padding: 4px 8px 4px;
   display: inline-block;
   text-decoration: none;
   cursor: pointer;
+  background: ${({ theme }) => theme.colors.primary.light};
+  border-radius: 4px;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.primary.main};
+  }
 
   ${extensionsHook('DownloadButton')};
 `;

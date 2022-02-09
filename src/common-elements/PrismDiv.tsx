@@ -74,7 +74,7 @@ export const PrismDiv = styled.div`
   .token.char,
   .token.builtin,
   .token.inserted {
-    color: #a0fbaa;
+    color: green;
     & + a,
     & + a:visited {
       color: #4ed2ba;
@@ -83,7 +83,7 @@ export const PrismDiv = styled.div`
   }
 
   .token.property.string {
-    color: white;
+    color: #4a8bb3;
   }
 
   .token.operator,

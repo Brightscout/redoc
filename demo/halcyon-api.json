@@ -1,0 +1,2532 @@
+{
+  "info": {
+    "title": "Halcyon WebAPI",
+    "x-logo": {
+      "url": "/Logo.svg",
+      "altText": "Example logo",
+      "backgroundColor": "#3f4c76"
+    },
+    "version": "0.0.0+0-g0000000-localdev"
+  },
+  "tags": [
+    { "name": "auth", "description": "" },
+    { "name": "user", "description": "" },
+    { "name": "tenant", "description": "" },
+    { "name": "registration", "description": "" },
+    { "name": "device", "description": "" },
+    { "name": "event", "description": "" },
+    { "name": "threat", "description": "" },
+    { "name": "decision_item", "description": "" },
+    { "name": "predictor", "description": "" },
+    { "name": "healthcheck", "description": "" }
+  ],
+  "paths": {
+    "/health/": {
+      "get": {
+        "tags": ["healthcheck"],
+        "summary": "Service endpoint for healthcheck",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthCheck"
+                }
+              }
+            },
+            "description": "Successfully connected to service"
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "As a healthcheck endpoint, returns 200 and json showing no error"
+      }
+    },
+    "/v1/user/": {
+      "get": {
+        "tags": ["user"],
+        "summary": "Gets the current user information.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                },
+                "example": {
+                  "data": {
+                    "id": "89B09CAC-EA94-47B2-8D28-FC9485A14EB7",
+                    "email": "jdoe@company.com",
+                    "username": "jdoe",
+                    "full_name": "John Doe"
+                  },
+                  "success": true
+                }
+              }
+            },
+            "description": "Query Successful."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceResponse"
+                },
+                "example": {
+                  "errors": ["The selected user was not found."],
+                  "success": false
+                }
+              }
+            },
+            "description": "User not found."
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "Returns the user information for the current user."
+      },
+      "post": {
+        "tags": ["user"],
+        "summary": "Updates the the current user information.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                },
+                "example": {
+                  "data": {
+                    "id": "89B09CAC-EA94-47B2-8D28-FC9485A14EB7",
+                    "email": "jdoe@company.com",
+                    "username": "jdoe",
+                    "full_name": "John Doe"
+                  },
+                  "success": true
+                }
+              }
+            },
+            "description": "Save Successful."
+          },
+          "422": {
+            "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "Updates the logged in user information.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/User" },
+              "example": {
+                "email": "jdoe@company.com",
+                "full_name": "John Doe"
+              }
+            }
+          },
+          "required": true
+        }
+      }
+    },
+    "/v1/event/": {
+      "get": {
+        "tags": ["event"],
+        "summary": "Gets the event list.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionHeaderEvent"
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": "15BCBD66-A5AF-4143-87C0-188C5BA7ED86",
+                      "name": "Execution Sandboxed",
+                      "type": "ExecutionEvent",
+                      "action": {
+                        "id": "D4D5E70A-0401-4479-ACEA-7E10C630C9CD",
+                        "type": "Sandbox",
+                        "occurrence_date": "2021-08-14T08:53:39.642310"
+                      },
+                      "device_id": "917db386-3e34-4a56-8be8-c6e928c7d61e",
+                      "tenant_id": "4AE26D6E-6DFF-4E8A-8B0B-A8BFA3AFC0A3",
+                      "threat_id": "ce879cb2ea87b4379cc9fcc80f83b89c6c656bd1e4ded929d22d49e8ee301600",
+                      "executing_user": "gloomyThrush6",
+                      "executable_path": "C:\\crushedCamel9\\humorousJerky8.exe",
+                      "occurrence_date": "2021-10-04T08:53:39.642520"
+                    }
+                  ],
+                  "success": true
+                }
+              }
+            },
+            "headers": {
+              "X-Pagination": {
+                "$ref": "#/components/headers/PAGINATION"
+              }
+            },
+            "description": "Query Successful."
+          },
+          "422": {
+            "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "maximum": 100,
+              "minimum": 1
+            },
+            "required": false
+          }
+        ],
+        "description": "Returns the list of most current events."
+      }
+    },
+    "/v1/device/": {
+      "get": {
+        "tags": ["device"],
+        "summary": "Gets the device list.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceHeaderListResponse"
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": "3FF92C70-11C1-40D3-A8D1-1A806FAF9406",
+                      "name": "DESKTOP-10S2U4R",
+                      "os_name": "Microsoft Windows 10 Pro",
+                      "heartbeat": "2021-10-02T21:21:01.862461",
+                      "registered_date": "2021-05-02T21:16:52.095749"
+                    }
+                  ],
+                  "success": true,
+                  "pagination": {
+                    "page": 1,
+                    "total": 1,
+                    "last_page": 1,
+                    "next_page": null,
+                    "first_page": 1,
+                    "total_pages": 1,
+                    "previous_page": null
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-Pagination": {
+                "$ref": "#/components/headers/PAGINATION"
+              }
+            },
+            "description": "Query Successful."
+          },
+          "422": {
+            "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "maximum": 100,
+              "minimum": 1
+            },
+            "required": false
+          }
+        ],
+        "description": "Returns the list of devices registered in the system."
+      }
+    },
+    "/v1/tenant/": {
+      "get": {
+        "tags": ["tenant"],
+        "summary": "Gets the current tenant information.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantResponse"
+                },
+                "example": {
+                  "data": {
+                    "id": "89B09CAC-EA94-47B2-8D28-FC9485A14EB7",
+                    "name": "ACME, Inc."
+                  },
+                  "success": true
+                }
+              }
+            },
+            "description": "Query Successful."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceResponse"
+                },
+                "example": {
+                  "errors": ["The selected tenant was not found."],
+                  "success": false
+                }
+              }
+            },
+            "description": "Tenant not found."
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "Returns the information for the current tenant."
+      },
+      "post": {
+        "tags": ["tenant"],
+        "summary": "Updates the current tenant information.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantResponse"
+                },
+                "example": {
+                  "data": {
+                    "id": "89B09CAC-EA94-47B2-8D28-FC9485A14EB7",
+                    "name": "ACME, Inc."
+                  },
+                  "success": true
+                }
+              }
+            },
+            "description": "Save Successful."
+          },
+          "422": {
+            "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "Updates the information for the current tenant.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Tenant" },
+              "example": { "name": "ACME, Inc." }
+            }
+          },
+          "required": true
+        }
+      }
+    },
+    "/v1/auth/login": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "Starts a session for a user with the selected credentials.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionTokensResponse"
+                },
+                "example": {
+                  "data": {
+                    "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.....",
+                    "refresh_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9....."
+                  },
+                  "success": true
+                }
+              }
+            },
+            "description": "Authentication successful."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceResponse"
+                },
+                "example": {
+                  "errors": ["Invalid credentials for user myusername"],
+                  "success": false
+                }
+              }
+            },
+            "description": "Invalid credentials"
+          },
+          "422": {
+            "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "Authenticates a user using user name \u0026 password and starts a session.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCredentials"
+              },
+              "example": {
+                "password": "my_password",
+                "username": "my_username"
+              }
+            }
+          },
+          "required": true
+        }
+      }
+    },
+    "/v1/auth/logout": {
+      "delete": {
+        "tags": ["auth"],
+        "summary": "Logs the user out of the session.",
+        "responses": {
+          "200": {
+            "description": "Successfully logged out of the system."
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "It effectively revokes the access and refresh tokens associated with the session."
+      }
+    },
+    "/v1/tenant/user": {
+      "post": {
+        "tags": ["tenant"],
+        "summary": "Creates a new user for the tenant.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                },
+                "example": {
+                  "data": {
+                    "id": "89B09CAC-EA94-47B2-8D28-FC9485A14EB7",
+                    "email": "jdoe@company.com",
+                    "username": "jdoe",
+                    "full_name": "John Doe"
+                  },
+                  "success": true
+                }
+              }
+            },
+            "description": "Save Successful."
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceResponse"
+                },
+                "example": {
+                  "errors": ["The selected username is in use."],
+                  "success": false
+                }
+              }
+            },
+            "description": "Username is in use"
+          },
+          "422": {
+            "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "Creates a new user for the current tenant.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRegistration"
+              },
+              "example": {
+                "email": "jdoe@x.net",
+                "password": "my_password",
+                "username": "my_username",
+                "full_name": "John Doe"
+              }
+            }
+          },
+          "required": true
+        }
+      }
+    },
+    "/v1/auth/refresh": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "Refresh an expiring access token.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionTokensResponse"
+                },
+                "example": {
+                  "data": {
+                    "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.....",
+                    "refresh_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9....."
+                  },
+                  "success": true
+                }
+              }
+            },
+            "description": "Token refresh successful."
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "Creates a new access token to replace the expiring access token."
+      }
+    },
+    "/v1/tenant/users": {
+      "get": {
+        "tags": ["tenant"],
+        "summary": "Gets the list of users for the current tenant.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                },
+                "example": { "data": {}, "success": true }
+              }
+            },
+            "headers": {
+              "X-Pagination": {
+                "$ref": "#/components/headers/PAGINATION"
+              }
+            },
+            "description": "Query Successful."
+          },
+          "422": {
+            "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "maximum": 100,
+              "minimum": 1
+            },
+            "required": false
+          }
+        ],
+        "description": "Returns the list of users for the current tenant."
+      }
+    },
+    "/v1/event/metrics": {
+      "get": {
+        "tags": ["event"],
+        "summary": "Returns total metrics for all time.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventMetrics"
+                },
+                "example": {
+                  "data": {
+                    "total": 10,
+                    "allowed": 8,
+                    "blocked": 1,
+                    "sandboxed": 1
+                  },
+                  "success": true
+                }
+              }
+            },
+            "description": "Query Successful."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceResponse"
+                },
+                "example": {
+                  "errors": ["The selected event was not found."],
+                  "success": false
+                }
+              }
+            },
+            "description": "Event not found."
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "Return metrics broken down by event action type"
+      }
+    },
+    "/v1/registration/": {
+      "post": {
+        "tags": ["registration"],
+        "summary": "Registers a new User.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                },
+                "example": {
+                  "data": {
+                    "id": "34AB9B01-1C12-4EE5-AA42-41BE2BEB496D",
+                    "email": "jdoe@x.net",
+                    "username": "my_username",
+                    "tenant_id": "54071e47-ccda-43c5-9e82-23572e435d83"
+                  },
+                  "success": true
+                }
+              }
+            },
+            "description": "Registration Successful."
+          },
+          "422": {
+            "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRegistration"
+              },
+              "example": {
+                "email": "jdoe@x.net",
+                "password": "my_password",
+                "username": "my_username",
+                "full_name": "John Doe",
+                "tenant_name": "my_tenant_name"
+              }
+            }
+          },
+          "required": true
+        }
+      }
+    },
+    "/v1/user/password": {
+      "post": {
+        "tags": ["user"],
+        "summary": "Updates the the current user's password.",
+        "responses": {
+          "200": { "description": "Password updated." },
+          "400": {
+            "description": "Password doesn't meet the complexity requirements."
+          },
+          "401": { "description": "Current Password doesn't match." },
+          "422": {
+            "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "Updates the logged in user password.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordChange"
+              },
+              "example": {
+                "new": "new_password",
+                "current": "current_password"
+              }
+            }
+          },
+          "required": true
+        }
+      }
+    },
+    "/v1/decision_item/": {
+      "post": {
+        "tags": ["decision_item"],
+        "summary": "Adds the given item to the decision lists for the current tenant.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": { "success": true }
+              }
+            },
+            "description": "Query Successful."
+          },
+          "422": {
+            "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "Adds the given item to the decisions lists for the current tenant.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionItem"
+              },
+              "example": {
+                "id": "a77a12935957c2b79bf8ac9c1cee065350a7089dc519a93db8cbabe4ab360554",
+                "action": "Allow",
+                "content_type": "File"
+              }
+            }
+          },
+          "required": true
+        }
+      }
+    },
+    "/v1/device/metrics": {
+      "get": {
+        "tags": ["device"],
+        "summary": "Gets device metrics..",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceMetric"
+                },
+                "example": {
+                  "data": {
+                    "total": 1,
+                    "need_updates": 0,
+                    "no_heartbeats": 1
+                  },
+                  "success": true
+                }
+              }
+            },
+            "description": "Query Successful."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceResponse"
+                },
+                "example": {
+                  "errors": ["No Device Metrics found."],
+                  "success": false
+                }
+              }
+            },
+            "description": "Unable to compute device metrics."
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "Gets device metrics broken down by heartbeat and agent version."
+      }
+    },
+    "/v1/event/critical": {
+      "get": {
+        "tags": ["event"],
+        "summary": "Returns critical events. ",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionHeaderEvent"
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": "15BCBD66-A5AF-4143-87C0-188C5BA7ED86",
+                      "name": "Execution Blocked",
+                      "type": "ExecutionEvent",
+                      "action": {
+                        "id": "D4D5E70A-0401-4479-ACEA-7E10C630C9CD",
+                        "type": "Block",
+                        "occurrence_date": "2021-08-14T08:53:39.642310"
+                      },
+                      "device_id": "917db386-3e34-4a56-8be8-c6e928c7d61e",
+                      "tenant_id": "4AE26D6E-6DFF-4E8A-8B0B-A8BFA3AFC0A3",
+                      "threat_id": "ce879cb2ea87b4379cc9fcc80f83b89c6c656bd1e4ded929d22d49e8ee301600",
+                      "executing_user": "gloomyThrush6",
+                      "executable_path": "C:\\crushedCamel9\\humorousJerky8.exe",
+                      "occurrence_date": "2021-10-04T08:53:39.642520"
+                    }
+                  ],
+                  "success": true
+                }
+              }
+            },
+            "description": "Query Successful."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceResponse"
+                },
+                "example": {
+                  "errors": ["Could not find any critical events."],
+                  "success": false
+                }
+              }
+            },
+            "description": "Event not found."
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "Returns events deemed to be critical"
+      }
+    },
+    "/v1/event/{event_id}": {
+      "get": {
+        "tags": ["event"],
+        "summary": "Gets an event by identifier.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionEvent"
+                },
+                "example": {
+                  "data": {
+                    "id": "15BCBD66-A5AF-4143-87C0-188C5BA7ED86",
+                    "name": "Execution Blocked",
+                    "type": "ExecutionEvent",
+                    "action": {
+                      "id": "D4D5E70A-0401-4479-ACEA-7E10C630C9CD",
+                      "type": "Block",
+                      "occurrence_date": "2021-08-14T08:53:39.642310"
+                    },
+                    "device_id": "917db386-3e34-4a56-8be8-c6e928c7d61e",
+                    "tenant_id": "4AE26D6E-6DFF-4E8A-8B0B-A8BFA3AFC0A3",
+                    "threat_id": "ce879cb2ea87b4379cc9fcc80f83b89c6c656bd1e4ded929d22d49e8ee301600",
+                    "executing_user": "gloomyThrush6",
+                    "executable_path": "C:\\crushedCamel9\\humorousJerky8.exe",
+                    "occurrence_date": "2021-10-04T08:53:39.642520"
+                  },
+                  "success": true
+                }
+              }
+            },
+            "description": "Query Successful."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceResponse"
+                },
+                "example": {
+                  "errors": ["The selected event was not found."],
+                  "success": false
+                }
+              }
+            },
+            "description": "Event not found."
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "Returns the full information for the selected event."
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "event_id",
+          "schema": { "type": "string", "minLength": 1 },
+          "required": true
+        }
+      ]
+    },
+    "/v1/tenant/installer": {
+      "get": {
+        "tags": ["tenant"],
+        "summary": "Gets the agent installer information.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstallerInfoResponse"
+                },
+                "example": {
+                  "data": {
+                    "download_url": "https://download.halcyon.ai/v1.0.0",
+                    "install_token": "iMrRVHy4TUa1UaOVsLa5FA=="
+                  },
+                  "success": true
+                }
+              }
+            },
+            "description": "Query Successful."
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "Returns the agent installer and token."
+      },
+      "post": {
+        "tags": ["tenant"],
+        "summary": "Generates a new token.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstallerInfoResponse"
+                },
+                "example": {
+                  "data": {
+                    "download_url": "https://download.halcyon.ai/v1.0.0",
+                    "install_token": "iMrRVHy4TUa1UaOVsLa5FA=="
+                  },
+                  "success": true
+                }
+              }
+            },
+            "description": "Generation Successful."
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "Creates new installation token for the tenant, invalidating the previous token."
+      }
+    },
+    "/v1/predictor/predict": {
+      "post": {
+        "tags": ["predictor"],
+        "responses": {
+          "422": {
+            "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/PredictFileRequest"
+              }
+            }
+          },
+          "required": true
+        }
+      }
+    },
+    "/v1/device/{device_id}": {
+      "get": {
+        "tags": ["device"],
+        "summary": "Gets a device by identifier..",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceResponse"
+                },
+                "example": {
+                  "data": {
+                    "id": "3FF92C70-11C1-40D3-A8D1-1A806FAF9406",
+                    "name": "DESKTOP-10S2U4R",
+                    "epp_list": [
+                      {
+                        "id": "C8E3FEF9-537A-4B6C-84F5-C962BB9101D9",
+                        "name": "Windows Defender",
+                        "version": "10",
+                        "last_updated": "2021-09-25T22:27:35.674237"
+                      }
+                    ],
+                    "heartbeat": "2021-10-02T22:27:35.674225",
+                    "agent_info": {
+                      "id": "8C6C318D-B14B-4F44-BE4B-0CAF6AAF02F4",
+                      "name": "Halcyon Anti-Ransomware",
+                      "version": "1.0.0.0",
+                      "last_updated": "2021-10-02T22:17:35.674246"
+                    },
+                    "system_info": {
+                      "id": "B1CEFF20-70AD-4E4A-8F52-97D327C046C6",
+                      "type": "x64-based PC",
+                      "model": "XPS 17 9700",
+                      "timezone": "(UTC-08:00) Pacific Time (US \u0026 Canada)",
+                      "boot_time": "2021-10-02T21:27:35.674258",
+                      "processor": "1 Processor(s) Installed.,[01]: Intel64 Family 6 Model 165 Stepping 2 GenuineIntel ~2400 Mhz",
+                      "os_install": {
+                        "id": "385E7368-34F0-4238-89DA-DC742E83E8CF",
+                        "domain": "WORKGROUP",
+                        "os_info": {
+                          "id": "A810E213-1B17-45F5-9D6F-C9AFA33B3807",
+                          "name": "Microsoft Windows 10 Pro",
+                          "version": "10.0.19043 N/A Build 19043",
+                          "build_type": "Multiprocessor Free",
+                          "manufacturer": "Microsoft Corporation",
+                          "configuration": "Standalone Workstation"
+                        },
+                        "hotfixes": ["KB5004331", "KB5000736", "KB5004296", "KB5004347"],
+                        "product_id": "00330-53236-69304-AAOEM",
+                        "install_date": "2021-08-03T22:27:35.674253",
+                        "logon_server": "\\\\DESKTOP-10S2U4R",
+                        "registered_org": "N/A",
+                        "registered_owner": "jdoe"
+                      },
+                      "boot_device": "\\Device\\HarddiskVolume1",
+                      "bios_version": "Dell Inc. 1.8.2, 5/21/2021",
+                      "input_locale": "en-us;English (United States)",
+                      "manufacturer": "Dell Inc.",
+                      "recorded_time": "2021-10-02T22:27:35.674263",
+                      "system_locale": "en-us;English (United States)",
+                      "total_physical_memory": "65,281 MB"
+                    },
+                    "registered_date": "2021-05-02T21:16:52.095749"
+                  },
+                  "success": true
+                }
+              }
+            },
+            "description": "Query Successful."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceResponse"
+                },
+                "example": {
+                  "errors": ["The selected device was not found."],
+                  "success": false
+                }
+              }
+            },
+            "description": "Device not found."
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "Returns the full information for the selected device."
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "device_id",
+          "schema": { "type": "string", "minLength": 1 },
+          "required": true
+        }
+      ]
+    },
+    "/v1/threat/{threat_id}": {
+      "get": {
+        "tags": ["threat"],
+        "summary": "Gets an threat by identifier.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionEvent"
+                },
+                "example": {
+                  "data": {
+                    "id": "a77a12935957c2b79bf8ac9c1cee065350a7089dc519a93db8cbabe4ab360554",
+                    "type": "CodeSigning",
+                    "valid_to": "2021-10-17T08:53:40.402961",
+                    "valid_from": "2021-09-16T08:53:40.402958",
+                    "certificate_chain": [
+                      {
+                        "index": 0,
+                        "issuer": "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Corporation",
+                        "subject": "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Code Signing PCA 2011",
+                        "certificate_id": "a77a12935957c2b79bf8ac9c1cee065350a7089dc519a93db8cbabe4ab360554"
+                      },
+                      {
+                        "index": 1,
+                        "issuer": "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Corporation",
+                        "subject": "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Code Signing PCA 2011",
+                        "certificate_id": "a77a12935957c2b79bf8ac9c1cee065350a7089dc519a93db8cbabe4ab360554"
+                      },
+                      {
+                        "index": 2,
+                        "issuer": "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Code Signing PCA 2011",
+                        "subject": "/C=US/ST=Washington/L=Redmond/O=Microsoft Corporation/CN=Microsoft Root Certificate Authority 2011",
+                        "certificate_id": "a77a12935957c2b79bf8ac9c1cee065350a7089dc519a93db8cbabe4ab360554"
+                      }
+                    ]
+                  },
+                  "success": true
+                }
+              }
+            },
+            "description": "Query Successful."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceResponse"
+                },
+                "example": {
+                  "errors": ["The selected threat was not found."],
+                  "success": false
+                }
+              }
+            },
+            "description": "Threat not found."
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "Returns the full information for the selected threat by SHA256 of the file."
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "threat_id",
+          "schema": { "type": "string", "minLength": 1 },
+          "required": true
+        }
+      ]
+    },
+    "/v1/device/need-attention": {
+      "get": {
+        "tags": ["device"],
+        "summary": "Gets devices that need attention..",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceHeaderListResponse"
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": "3FF92C70-11C1-40D3-A8D1-1A806FAF9406",
+                      "name": "DESKTOP-10S2U4R",
+                      "os_name": "Microsoft Windows 10 Pro",
+                      "heartbeat": "2021-10-02T21:21:01.862461",
+                      "registered_date": "2021-05-02T21:16:52.095749"
+                    }
+                  ],
+                  "success": true,
+                  "pagination": {
+                    "page": 1,
+                    "total": 1,
+                    "last_page": 1,
+                    "next_page": null,
+                    "first_page": 1,
+                    "total_pages": 1,
+                    "previous_page": null
+                  }
+                }
+              }
+            },
+            "headers": {
+              "X-Pagination": {
+                "$ref": "#/components/headers/PAGINATION"
+              }
+            },
+            "description": "Query Successful."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceResponse"
+                },
+                "example": {
+                  "errors": ["No Devices needing attention found."],
+                  "success": false
+                }
+              }
+            },
+            "headers": {
+              "X-Pagination": {
+                "$ref": "#/components/headers/PAGINATION"
+              }
+            },
+            "description": "Devices not found."
+          },
+          "422": {
+            "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "maximum": 100,
+              "minimum": 1
+            },
+            "required": false
+          }
+        ],
+        "description": "Gets a list of devices that need attention."
+      }
+    },
+    "/v1/tenant/user/{user_id}": {
+      "get": {
+        "tags": ["tenant"],
+        "summary": "Gets the selected user.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                },
+                "example": {
+                  "data": {
+                    "id": "89B09CAC-EA94-47B2-8D28-FC9485A14EB7",
+                    "email": "jdoe@company.com",
+                    "username": "jdoe",
+                    "full_name": "John Doe"
+                  },
+                  "success": true
+                }
+              }
+            },
+            "description": "Query Successful."
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "Returns an existing user for the current tenant."
+      },
+      "delete": {
+        "tags": ["tenant"],
+        "summary": "Deletes the selected user.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                },
+                "example": { "success": true }
+              }
+            },
+            "description": "Delete Successful."
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "Deletes an existing user for the current tenant."
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "user_id",
+          "schema": { "type": "string", "minLength": 1 },
+          "required": true
+        }
+      ]
+    },
+    "/v1/event/metrics-by-month": {
+      "get": {
+        "tags": ["event"],
+        "summary": "Returns total metrics for last 12 months, grouped by month.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventMetricsByMonth"
+                },
+                "example": {
+                  "data": {
+                    "months": {
+                      "202112": {
+                        "total": 10,
+                        "allowed": 8,
+                        "blocked": 1,
+                        "sandboxed": 1
+                      }
+                    }
+                  },
+                  "success": true
+                }
+              }
+            },
+            "description": "Query Successful."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceResponse"
+                },
+                "example": {
+                  "errors": ["The selected event was not found."],
+                  "success": false
+                }
+              }
+            },
+            "description": "Event not found."
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "Return metrics broken down by event action type and month"
+      }
+    },
+    "/v1/user/{username}/exists": {
+      "get": {
+        "tags": ["user"],
+        "summary": "Checks to see if a username is found.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceResponse"
+                },
+                "example": { "found": true, "success": true }
+              }
+            },
+            "description": "User exists."
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "Returns True if the username is found, false otherwise."
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "username",
+          "schema": { "type": "string", "minLength": 1 },
+          "required": true
+        }
+      ]
+    },
+    "/v1/device/{device_id}/events": {
+      "get": {
+        "tags": ["device"],
+        "summary": "Gets the list of events for the device.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionEvent"
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": "15BCBD66-A5AF-4143-87C0-188C5BA7ED86",
+                      "name": "Execution Sandboxed",
+                      "type": "ExecutionEvent",
+                      "action": {
+                        "id": "D4D5E70A-0401-4479-ACEA-7E10C630C9CD",
+                        "type": "Sandbox",
+                        "occurrence_date": "2021-08-14T08:53:39.642310"
+                      },
+                      "device_id": "917db386-3e34-4a56-8be8-c6e928c7d61e",
+                      "tenant_id": "4AE26D6E-6DFF-4E8A-8B0B-A8BFA3AFC0A3",
+                      "threat_id": "ce879cb2ea87b4379cc9fcc80f83b89c6c656bd1e4ded929d22d49e8ee301600",
+                      "executing_user": "gloomyThrush6",
+                      "executable_path": "C:\\crushedCamel9\\humorousJerky8.exe",
+                      "occurrence_date": "2021-10-04T08:53:39.642520"
+                    }
+                  ],
+                  "success": true
+                }
+              }
+            },
+            "headers": {
+              "X-Pagination": {
+                "$ref": "#/components/headers/PAGINATION"
+              }
+            },
+            "description": "Query Successful."
+          },
+          "422": {
+            "$ref": "#/components/responses/UNPROCESSABLE_ENTITY"
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            },
+            "required": false
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "maximum": 100,
+              "minimum": 1
+            },
+            "required": false
+          }
+        ],
+        "description": "Returns the list of events for the device."
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "device_id",
+          "schema": { "type": "string", "minLength": 1 },
+          "required": true
+        }
+      ]
+    },
+    "/v1/threat/{threat_id}/download": {
+      "get": {
+        "tags": ["threat"],
+        "summary": "Downloads a threat file by identifier.",
+        "responses": {
+          "200": { "description": "Threat File Found." },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceResponse"
+                },
+                "example": {
+                  "errors": ["The selected threat was not found."],
+                  "success": false
+                }
+              }
+            },
+            "description": "Threat not found."
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "Returns the full threat file from the repository."
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "threat_id",
+          "schema": { "type": "string", "minLength": 1 },
+          "required": true
+        }
+      ]
+    },
+    "/v1/event/{event_id}/request_threat": {
+      "post": {
+        "tags": ["event"],
+        "summary": "Gets an event by identifier.",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionEvent"
+                }
+              }
+            },
+            "description": "Threat Request Successful."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceResponse"
+                },
+                "example": {
+                  "errors": ["The selected event was not found."],
+                  "success": false
+                }
+              }
+            },
+            "description": "Event not found."
+          },
+          "default": {
+            "$ref": "#/components/responses/DEFAULT_ERROR"
+          }
+        },
+        "description": "Returns the full information for the selected event."
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "event_id",
+          "schema": { "type": "string", "minLength": 1 },
+          "required": true
+        }
+      ]
+    }
+  },
+  "openapi": "3.0.3",
+  "security": [{ "BearerAuthorization": [] }],
+  "components": {
+    "headers": {
+      "PAGINATION": {
+        "schema": { "$ref": "#/components/schemas/PaginationMetadata" },
+        "description": "Pagination metadata"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "required": ["email", "full_name"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true,
+            "description": "User Identifier."
+          },
+          "email": { "type": "string", "description": "User Email" },
+          "username": {
+            "type": "string",
+            "nullable": true,
+            "description": "User Name."
+          },
+          "full_name": {
+            "type": "string",
+            "description": "User Full Name."
+          },
+          "tenant_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Tenant Identifier."
+          }
+        },
+        "additionalProperties": false
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "integer", "description": "Error code" },
+          "errors": { "type": "object", "description": "Errors" },
+          "status": { "type": "string", "description": "Error name" },
+          "message": {
+            "type": "string",
+            "description": "Error message"
+          }
+        }
+      },
+      "Action": {
+        "type": "object",
+        "required": ["action_type", "occurrence_date"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Action Identifier."
+          },
+          "action_type": { "description": "Action Type." },
+          "occurrence_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Action Occurrence Date."
+          }
+        }
+      },
+      "Device": {
+        "type": "object",
+        "required": ["agent_info", "heartbeat", "name", "registered_date", "system_info"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Device Identifier."
+          },
+          "name": { "type": "string", "description": "Device Name." },
+          "epp_list": {
+            "type": "array",
+            "items": {
+              "allOf": [{ "$ref": "#/components/schemas/EppInfo" }],
+              "description": "List of EPPs installed"
+            },
+            "nullable": true
+          },
+          "heartbeat": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Device Heartbeat."
+          },
+          "agent_info": {
+            "allOf": [{ "$ref": "#/components/schemas/AgentInfo" }],
+            "description": "Agent Information"
+          },
+          "system_info": {
+            "allOf": [{ "$ref": "#/components/schemas/SystemInfo" }],
+            "description": "System Information"
+          },
+          "registered_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Device Register Date."
+          }
+        }
+      },
+      "OsInfo": {
+        "type": "object",
+        "required": ["manufacturer", "name"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true,
+            "description": "OS Information Identifier."
+          },
+          "name": { "type": "string", "description": "OS Name." },
+          "version": {
+            "type": "string",
+            "nullable": true,
+            "description": "OS Version."
+          },
+          "build_type": {
+            "type": "string",
+            "nullable": true,
+            "description": "OS Build Type."
+          },
+          "manufacturer": {
+            "type": "string",
+            "description": "OS Manufacturer."
+          },
+          "configuration": {
+            "type": "string",
+            "nullable": true,
+            "description": "OS Configuration."
+          }
+        }
+      },
+      "Signer": {
+        "type": "object",
+        "properties": {
+          "issuer": {
+            "type": "string",
+            "nullable": true,
+            "description": "Signer Certificate Issuer."
+          },
+          "subject": {
+            "type": "string",
+            "nullable": true,
+            "description": "Signer Certificate Subject."
+          }
+        }
+      },
+      "Tenant": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Tenant Identifier."
+          },
+          "name": { "type": "string", "description": "Tenant Name." }
+        },
+        "additionalProperties": false
+      },
+      "EppInfo": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true,
+            "description": "EPP Information Identifier."
+          },
+          "name": { "type": "string", "description": "EPP Name." },
+          "version": {
+            "type": "string",
+            "nullable": true,
+            "description": "EPP Version."
+          },
+          "last_updated": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "EPP Last Updated date"
+          }
+        }
+      },
+      "AgentInfo": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Agent Information Identifier."
+          },
+          "name": { "type": "string", "description": "Agent Name." },
+          "version": {
+            "type": "string",
+            "nullable": true,
+            "description": "Agent Version."
+          },
+          "last_updated": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Agent Last Updated date"
+          }
+        }
+      },
+      "Executable": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Executable Identifier. SHA256 of the file."
+          },
+          "md5": {
+            "type": "string",
+            "nullable": true,
+            "description": "Executable MD5."
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Executable Name."
+          },
+          "sha1": {
+            "type": "string",
+            "nullable": true,
+            "description": "Executable SHA1."
+          },
+          "score": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ExecutableThreatScore"
+              }
+            ],
+            "nullable": true,
+            "description": "Executable Threat Score"
+          },
+          "file_size": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Executable File Size in bytes."
+          },
+          "file_type": {
+            "type": "string",
+            "nullable": true,
+            "description": "Executable File Type."
+          },
+          "certificates": {
+            "type": "array",
+            "items": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/CodeSigningCertificate"
+                }
+              ],
+              "nullable": true,
+              "description": "Executable Code Signing Certificate Chain"
+            },
+            "nullable": true,
+            "description": "List of Code Signing Certificate Chains"
+          }
+        }
+      },
+      "SystemInfo": {
+        "type": "object",
+        "required": [
+          "bios_version",
+          "boot_device",
+          "boot_time",
+          "input_locale",
+          "manufacturer",
+          "model",
+          "os_install",
+          "processor",
+          "recorded_time",
+          "system_locale",
+          "timezone",
+          "total_physical_memory",
+          "type"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true,
+            "description": "System Information Identifier."
+          },
+          "type": { "type": "string", "description": "System Type." },
+          "model": {
+            "type": "string",
+            "description": "System Model."
+          },
+          "timezone": {
+            "type": "string",
+            "description": "System Timezone."
+          },
+          "boot_time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Boot time."
+          },
+          "processor": {
+            "type": "string",
+            "description": "System Processor."
+          },
+          "os_install": {
+            "allOf": [{ "$ref": "#/components/schemas/OsInstallInfo" }],
+            "description": "OS Install Information"
+          },
+          "boot_device": {
+            "type": "string",
+            "description": "System Boot Device."
+          },
+          "bios_version": {
+            "type": "string",
+            "description": "System BIOS Version."
+          },
+          "input_locale": {
+            "type": "string",
+            "description": "Input Locale."
+          },
+          "manufacturer": {
+            "type": "string",
+            "description": "System Manufacturer."
+          },
+          "recorded_time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "System Recorded Time."
+          },
+          "system_locale": {
+            "type": "string",
+            "description": "System Locale."
+          },
+          "total_physical_memory": {
+            "type": "string",
+            "description": "System Total Physical Memory."
+          }
+        }
+      },
+      "Certificate": {
+        "type": "object",
+        "required": ["index"],
+        "properties": {
+          "index": {
+            "type": "integer",
+            "description": "Certificate Index in the chain."
+          },
+          "issuer": {
+            "type": "string",
+            "nullable": true,
+            "description": "Certificate Issuer."
+          },
+          "subject": {
+            "type": "string",
+            "nullable": true,
+            "description": "Certificate Subject."
+          }
+        }
+      },
+      "HealthCheck": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "boolean",
+            "description": "Should always return False (meaning No Error)"
+          }
+        }
+      },
+      "DecisionItem": {
+        "type": "object",
+        "required": ["action", "content_type", "id"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Item Identifier."
+          },
+          "action": {
+            "description": "Action for this DecisionItem."
+          },
+          "content_type": {
+            "description": "Type of item content for this DecisionItem."
+          }
+        }
+      },
+      "DeviceHeader": {
+        "type": "object",
+        "required": ["heartbeat", "name", "os_name", "registered_date"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Device Identifier."
+          },
+          "name": { "type": "string", "description": "Device Name." },
+          "os_name": {
+            "type": "string",
+            "description": "Device Operating System."
+          },
+          "heartbeat": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Device Heartbeat."
+          },
+          "registered_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Device Register Date."
+          }
+        }
+      },
+      "DeviceMetric": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Total events."
+          },
+          "need_updates": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Total Devices with out of date agent version."
+          },
+          "no_heartbeats": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Total Devices with no heartbeat."
+          }
+        }
+      },
+      "EventMetrics": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Total events."
+          },
+          "allowed": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Total allowed events."
+          },
+          "blocked": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Total blocked events."
+          },
+          "sandboxed": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Total Sandboxed events."
+          }
+        }
+      },
+      "UserResponse": {
+        "type": "object",
+        "required": ["data", "success"],
+        "properties": {
+          "data": {
+            "allOf": [{ "$ref": "#/components/schemas/User" }],
+            "description": "User information."
+          },
+          "errors": {
+            "type": "array",
+            "items": { "type": "string" },
+            "nullable": true,
+            "description": "List of Errors occurred during the operation."
+          },
+          "success": {
+            "type": "boolean",
+            "description": "True if the operation was successful, false otherwise."
+          },
+          "pagination": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaginationMetadata"
+              }
+            ],
+            "nullable": true
+          }
+        }
+      },
+      "OsInstallInfo": {
+        "type": "object",
+        "required": [
+          "domain",
+          "install_date",
+          "logon_server",
+          "os_info",
+          "product_id",
+          "registered_org",
+          "registered_owner"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true,
+            "description": "OS Install Info Identifier."
+          },
+          "domain": { "type": "string", "description": "Domain." },
+          "os_info": {
+            "allOf": [{ "$ref": "#/components/schemas/OsInfo" }],
+            "description": "OS Information"
+          },
+          "hotfixes": {
+            "type": "array",
+            "items": { "type": "string" },
+            "nullable": true,
+            "description": "List of Hotfixes"
+          },
+          "product_id": {
+            "type": "string",
+            "description": "Product Identifier."
+          },
+          "install_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "OS Install Date."
+          },
+          "logon_server": {
+            "type": "string",
+            "description": "Logon Server"
+          },
+          "registered_org": {
+            "type": "string",
+            "description": "Registered Organization"
+          },
+          "registered_owner": {
+            "type": "string",
+            "description": "Registered Owner"
+          }
+        }
+      },
+      "SessionTokens": {
+        "type": "object",
+        "required": ["access_token", "refresh_token"],
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "description": "Token used to access the system's resources in a session."
+          },
+          "refresh_token": {
+            "type": "string",
+            "description": "Token used to refresh the access token when it expires."
+          }
+        }
+      },
+      "DeviceResponse": {
+        "type": "object",
+        "required": ["data", "success"],
+        "properties": {
+          "data": {
+            "allOf": [{ "$ref": "#/components/schemas/Device" }],
+            "description": "Device Information."
+          },
+          "errors": {
+            "type": "array",
+            "items": { "type": "string" },
+            "nullable": true,
+            "description": "List of Errors occurred during the operation."
+          },
+          "success": {
+            "type": "boolean",
+            "description": "True if the operation was successful, false otherwise."
+          },
+          "pagination": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaginationMetadata"
+              }
+            ],
+            "nullable": true
+          }
+        }
+      },
+      "ExecutionEvent": {
+        "type": "object",
+        "required": ["device_id", "device_name", "name", "occurrence_date"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Event Identifier."
+          },
+          "name": { "type": "string", "description": "Event Name." },
+          "action": {
+            "allOf": [{ "$ref": "#/components/schemas/Action" }],
+            "nullable": true,
+            "description": "Action Identifier."
+          },
+          "device_id": {
+            "type": "string",
+            "description": "Device Identifier."
+          },
+          "executable": {
+            "allOf": [{ "$ref": "#/components/schemas/Executable" }],
+            "nullable": true,
+            "description": "Executable Information."
+          },
+          "device_name": {
+            "type": "string",
+            "description": "Device Name."
+          },
+          "executing_user": {
+            "type": "string",
+            "nullable": true,
+            "description": "Executing User"
+          },
+          "executable_path": {
+            "type": "string",
+            "nullable": true,
+            "description": "Executable Path."
+          },
+          "occurrence_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Event Occurrence Date."
+          }
+        }
+      },
+      "PasswordChange": {
+        "type": "object",
+        "required": ["current", "new"],
+        "properties": {
+          "new": { "type": "string", "description": "New Password" },
+          "current": {
+            "type": "string",
+            "description": "Current Password"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TenantResponse": {
+        "type": "object",
+        "required": ["data", "success"],
+        "properties": {
+          "data": {
+            "allOf": [{ "$ref": "#/components/schemas/Tenant" }],
+            "description": "Tenant information."
+          },
+          "errors": {
+            "type": "array",
+            "items": { "type": "string" },
+            "nullable": true,
+            "description": "List of Errors occurred during the operation."
+          },
+          "success": {
+            "type": "boolean",
+            "description": "True if the operation was successful, false otherwise."
+          },
+          "pagination": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaginationMetadata"
+              }
+            ],
+            "nullable": true
+          }
+        }
+      },
+      "ServiceResponse": {
+        "type": "object",
+        "required": ["success"],
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": { "type": "string" },
+            "nullable": true,
+            "description": "List of Errors occurred during the operation."
+          },
+          "success": {
+            "type": "boolean",
+            "description": "True if the operation was successful, false otherwise."
+          },
+          "pagination": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaginationMetadata"
+              }
+            ],
+            "nullable": true
+          }
+        }
+      },
+      "UserCredentials": {
+        "type": "object",
+        "required": ["password", "username"],
+        "properties": {
+          "password": {
+            "type": "string",
+            "description": "User Password."
+          },
+          "username": {
+            "type": "string",
+            "description": "User name."
+          }
+        }
+      },
+      "UserRegistration": {
+        "type": "object",
+        "required": ["email", "full_name", "password", "username"],
+        "properties": {
+          "email": { "type": "string", "description": "User email." },
+          "password": {
+            "type": "string",
+            "description": "User Password."
+          },
+          "username": {
+            "type": "string",
+            "description": "User name."
+          },
+          "full_name": {
+            "type": "string",
+            "description": "User Full name"
+          },
+          "tenant_name": {
+            "type": "string",
+            "nullable": true,
+            "description": "Tenant Name."
+          }
+        }
+      },
+      "EventMetricsMonth": {
+        "type": "object",
+        "properties": {
+          "metric": { "$ref": "#/components/schemas/EventMetrics" },
+          "year_month": { "type": "integer" }
+        }
+      },
+      "PaginationMetadata": {
+        "type": "object",
+        "properties": {
+          "page": { "type": "integer" },
+          "total": { "type": "integer" },
+          "last_page": { "type": "integer" },
+          "next_page": { "type": "integer" },
+          "first_page": { "type": "integer" },
+          "total_pages": { "type": "integer" },
+          "previous_page": { "type": "integer" }
+        }
+      },
+      "PredictFileRequest": {
+        "type": "object",
+        "required": ["file"],
+        "properties": {
+          "file": { "type": "string", "format": "binary" }
+        }
+      },
+      "EventMetricsByMonth": {
+        "type": "object",
+        "properties": {
+          "months": {
+            "allOf": [{ "$ref": "#/components/schemas/EventMetricsMonth" }],
+            "nullable": true,
+            "description": "Total events by type grouped by month."
+          }
+        }
+      },
+      "ExecutionHeaderEvent": {
+        "type": "object",
+        "required": ["device_id", "device_name", "name", "occurrence_date"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Event Identifier."
+          },
+          "name": { "type": "string", "description": "Event Name." },
+          "action_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Action Identifier."
+          },
+          "device_id": {
+            "type": "string",
+            "description": "Device Identifier."
+          },
+          "device_name": {
+            "type": "string",
+            "description": "Device Name."
+          },
+          "executable_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Executable Identifier."
+          },
+          "occurrence_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Event Occurrence Date."
+          }
+        }
+      },
+      "ExecutableThreatScore": {
+        "type": "object",
+        "properties": {
+          "score": {
+            "type": "number",
+            "nullable": true,
+            "description": "Executable Threat Score value"
+          },
+          "confidence": {
+            "type": "number",
+            "nullable": true,
+            "description": "Executable Threat Score Confidence"
+          }
+        }
+      },
+      "InstallerInfoResponse": {
+        "type": "object",
+        "required": ["success"],
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": { "type": "string" },
+            "nullable": true,
+            "description": "List of Errors occurred during the operation."
+          },
+          "success": {
+            "type": "boolean",
+            "description": "True if the operation was successful, false otherwise."
+          },
+          "pagination": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaginationMetadata"
+              }
+            ],
+            "nullable": true
+          },
+          "download_url": {
+            "type": "string",
+            "nullable": true,
+            "description": "Installer Download URL."
+          },
+          "install_token": {
+            "type": "string",
+            "nullable": true,
+            "description": "Installation Token."
+          }
+        }
+      },
+      "SessionTokensResponse": {
+        "type": "object",
+        "required": ["data", "success"],
+        "properties": {
+          "data": {
+            "allOf": [{ "$ref": "#/components/schemas/SessionTokens" }],
+            "description": "Session tokens used to access the system."
+          },
+          "errors": {
+            "type": "array",
+            "items": { "type": "string" },
+            "nullable": true,
+            "description": "List of Errors occurred during the operation."
+          },
+          "success": {
+            "type": "boolean",
+            "description": "True if the operation was successful, false otherwise."
+          },
+          "pagination": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaginationMetadata"
+              }
+            ],
+            "nullable": true
+          }
+        }
+      },
+      "CodeSigningCertificate": {
+        "type": "object",
+        "required": ["certificates", "signer", "valid_from", "valid_to"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Certificate Identifier."
+          },
+          "signer": {
+            "allOf": [{ "$ref": "#/components/schemas/Signer" }],
+            "description": "Signer Information"
+          },
+          "valid_to": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Certificate Valid To Date."
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Certificate Valid From Date."
+          },
+          "certificates": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Certificate" },
+            "description": "Certificate Chain"
+          }
+        }
+      },
+      "DeviceHeaderListResponse": {
+        "type": "object",
+        "required": ["data", "success"],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DeviceHeader"
+            },
+            "description": "Device Header List."
+          },
+          "errors": {
+            "type": "array",
+            "items": { "type": "string" },
+            "nullable": true,
+            "description": "List of Errors occurred during the operation."
+          },
+          "success": {
+            "type": "boolean",
+            "description": "True if the operation was successful, false otherwise."
+          },
+          "pagination": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaginationMetadata"
+              }
+            ],
+            "nullable": true
+          }
+        }
+      }
+    },
+    "responses": {
+      "DEFAULT_ERROR": {
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        },
+        "description": "Default error response"
+      },
+      "UNPROCESSABLE_ENTITY": {
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        },
+        "description": "Unprocessable Entity"
+      }
+    },
+    "securitySchemes": {
+      "BearerAuthorization": {
+        "in": "header",
+        "name": "Authorization",
+        "type": "http",
+        "scheme": "bearer",
+        "description": "All api calls require an API Key.",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

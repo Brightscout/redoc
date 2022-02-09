@@ -1,4 +1,5 @@
 import { observer } from 'mobx-react';
+import { getLuminance } from 'polished';
 import * as React from 'react';
 
 import { Badge, DarkRightPanel, H2, MiddlePanel, Row } from '../../common-elements';
@@ -60,7 +61,12 @@ export class Operation extends React.Component<OperationProps> {
               <CallbacksList callbacks={operation.callbacks} />
             </MiddlePanel>
             <DarkRightPanel>
-              {!options.pathInMiddlePanel && !isWebhook && <Endpoint operation={operation} />}
+              {!options.pathInMiddlePanel && !isWebhook && (
+                <Endpoint
+                  operation={operation}
+                  inverted={getLuminance(options.theme.codeBlock.backgroundColor) > 0.5}
+                />
+              )}
               <RequestSamples operation={operation} />
               <ResponseSamples operation={operation} />
               <CallbackSamples callbacks={operation.callbacks} />
