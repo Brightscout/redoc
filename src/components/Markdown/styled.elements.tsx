@@ -82,7 +82,7 @@ export const StyledMarkdownBlock = styled(
     font-family: ${props => props.theme.typography.code.fontFamily};
     white-space: ${({ theme }) => (theme.typography.code.wrap ? 'pre-wrap' : 'pre')};
     background-color: ${({ theme }) => theme.codeBlock.backgroundColor};
-    color: white;
+    color: ${({ theme }) => theme.rightPanel.textColor};
     padding: ${props => props.theme.spacing.unit * 4}px;
     overflow-x: auto;
     line-height: normal;
@@ -91,7 +91,7 @@ export const StyledMarkdownBlock = styled(
 
     code {
       background-color: transparent;
-      color: white;
+      color: ${({ theme }) => theme.rightPanel.textColor};
       padding: 0;
 
       &:before,
@@ -105,8 +105,8 @@ export const StyledMarkdownBlock = styled(
     margin: 0;
     margin-bottom: 1em;
     padding: 0 15px;
-    color: #777;
-    border-left: 4px solid #ddd;
+    color: black;
+    border-left: 4px solid #;
   }
 
   img {

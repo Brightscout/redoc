@@ -15,6 +15,7 @@ export const StyledResponseTitle = styled(ResponseTitle)`
 
   color: ${props => props.theme.colors.responses[props.type].color};
   background-color: ${props => props.theme.colors.responses[props.type].backgroundColor};
+  border: 1px solid ${props => props.theme.colors.responses[props.type].borderColor};
   &:focus {
     outline: auto ${props => props.theme.colors.responses[props.type].color};
   }

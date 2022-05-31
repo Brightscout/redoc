@@ -97,5 +97,9 @@ export const ClearIcon = styled.i`
   margin-right: 2px;
   cursor: pointer;
   font-style: normal;
-  color: '#666';
+  color: ${({ theme }) =>
+    (getLuminance(theme.sidebar.backgroundColor) > 0.5 ? darken : lighten)(
+      0.6,
+      theme.sidebar.backgroundColor,
+    )}; ;
 `;

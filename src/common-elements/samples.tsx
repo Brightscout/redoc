@@ -1,3 +1,4 @@
+import { darken, getLuminance, lighten } from 'polished';
 import styled from '../styled-components';
 import { PrismDiv } from './PrismDiv';
 
@@ -9,7 +10,9 @@ export const SampleControls = styled.div`
     opacity: 1;
   }
   > button {
-    background-color: transparent;
+    background-color: ${({ theme }) => theme.rightPanel.panelControlsBackgroundColor};
+    border-radius: 5px;
+    margin: 5px;
     border: 0;
     color: inherit;
     padding: 2px 10px;
@@ -21,7 +24,15 @@ export const SampleControls = styled.div`
 
     :hover,
     :focus {
-      background: rgba(255, 255, 255, 0.1);
+      background: ${({ theme }) =>
+        (getLuminance(theme.rightPanel.panelControlsBackgroundColor) > 0.5 ? darken : lighten)(
+          0.1,
+          theme.rightPanel.panelControlsBackgroundColor,
+        )};
+    }
+
+    &:last-child {
+      margin-right: 0;
     }
   }
 `;
